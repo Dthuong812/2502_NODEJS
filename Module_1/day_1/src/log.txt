@@ -1,0 +1,2 @@
+[2025-04-12T16:08:42.021Z] ADD_AUTHOR - [object Object]: undefined
+[2025-04-12T16:09:38.667Z] ADD_AUTHOR: {"name":"2Khang","country":"Viet Nam","birthday":"01/12/2003","id":5}

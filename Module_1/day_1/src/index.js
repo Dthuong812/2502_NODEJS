@@ -142,7 +142,7 @@ res.render(view, options) (thường sử dụng với thư viện như express)
 Ví dụ: res.render('index', { title: 'Home' });
 
  */
-
+const { logAction } = require('./logger');
 const fs = require('fs')
 const path = require('path');
 const http = require("http")
@@ -150,14 +150,32 @@ const http = require("http")
 const PORT = 3000;
 
 const dataFilePath = path.join(__dirname, "data.json");
+const authorFilePath = path.join(__dirname, "author.json");
+const bookFilePath = path.join(__dirname, "book.json");
+
 console.log("dataFilePath", dataFilePath)
+
 const readData = () => {
     const data = fs.readFileSync(dataFilePath, "utf8")
+    return JSON.parse(data);
+};
+const readAuthorData = () => {
+    const data = fs.readFileSync(authorFilePath, "utf8")
+    return JSON.parse(data);
+};
+const readBookData = () => {
+    const data = fs.readFileSync(bookFilePath, "utf8")
     return JSON.parse(data);
 };
 
 const writeFile = (data) => {
     fs.writeFileSync(dataFilePath, JSON.stringify(data, null, 2)) // 2 là space khoảng cách giữa các từ
+};
+const writeAuthorFile = (data) => {
+    fs.writeFileSync(authorFilePath, JSON.stringify(data, null, 2)) // 2 là space khoảng cách giữa các từ
+};
+const writeBookFile = (data) => {
+    fs.writeFileSync(bookFilePath, JSON.stringify(data, null, 2)) // 2 là space khoảng cách giữa các từ
 };
 const server = http.createServer((req, res) => {
     const {method, url} = req;
@@ -196,33 +214,175 @@ const server = http.createServer((req, res) => {
                     writeFile(users);
                     res.writeHead(201, {'Content-Type': " application/json"})
                     res.end(JSON.stringify(users[userIndex]))
-                }else{
+                } else {
                     res.writeHead(404, {'Content-Type': " application/json"})
                     res.end(JSON.stringify({message: 'Route not found'}))
                 }
             }
-            if (method === 'DELETE') {
-                // xoa nguoi dung
+            if (method === 'DELETE') { // xoa nguoi dung
                 const users = readData();
                 const userId = parseInt(url.split('/')[2]);
-                const filteredUser = users.filter((user)=> user.id !== userId);
+                const filteredUser = users.filter((user) => user.id !== userId);
 
-                if(users.length !== filteredUser.length){
+                if (users.length !== filteredUser.length) {
                     writeFile(filteredUser);
                     res.writeHead(204);
                     res.end(JSON.stringify({message: 'OK'}));
-                }else{
+                } else {
                     res.writeHead(404, {'Content-Type': " application/json"})
                     res.end(JSON.stringify({message: 'Route not found'}))
                 }
             }
         })
-    } else {
+    } 
+    else if (url.startsWith('/author')) {
+        req.on('data', (data) => {
+            body += data.toString();
+        });
+        req.on("end", () => {
+            if (method === 'GET') { // lay tat ca tac gia
+                const authors = readAuthorData();
+                res.writeHead(200, {'Content-Type': " application/json"})
+                res.end(JSON.stringify(authors))
+            }
+            if (method === 'POST') { // tao tac gia moi
+                const authors = readAuthorData();
+                const newAuthor = JSON.parse(body);
+                newAuthor.id = authors.length ? authors[authors.length - 1].id + 1 : 1 // id tu dong tang
+                authors.push(newAuthor);
+                writeAuthorFile(authors);
+                logAction("ADD_AUTHOR", newAuthor);
+                res.writeHead(201, {'Content-Type': " application/json"})
+                res.end(JSON.stringify(newAuthor))
+            }
+            if (method === 'PUT') { // cap nhat tac gia hien tai
+                const authors = readAuthorData();
+                const authorId = parseInt(url.split('/')[2]);
+                const updateAuthor = JSON.parse(body);
+                const authorIndex = authors.findIndex((author) => author.id === authorId);
+
+                if (authorIndex !== -1) {
+                    authors[authorIndex] = {
+                        id: authorId,
+                        ... updateAuthor
+                    };
+                    writeAuthorFile(authors);
+                    logAction("UPDATE_AUTHOR", authors[authorIndex]);
+                    res.writeHead(201, {'Content-Type': " application/json"})
+                    res.end(JSON.stringify(authors[authorIndex]))
+                } else {
+                    res.writeHead(404, {'Content-Type': " application/json"})
+                    res.end(JSON.stringify({message: 'Route not found'}))
+                }
+            }
+            if (method === 'DELETE') { // xoa tac gia
+                const authors = readAuthorData();
+                const books = readBookData();
+
+                const authorId = parseInt(url.split('/')[2]);
+                const filteredAuthor = authors.filter((author) => author.id !== authorId);
+
+                if (authors.length !== filteredAuthor.length) {
+                    const filteredBooks = books.filter(book => book.authorId !== authorId);
+                    writeAuthorFile(filteredAuthor);
+                    writeBookFile(filteredBooks);
+                    logAction("DELETE_AUTHOR", { id: authorId });
+                    res.writeHead(200, {'Content-Type': " application/json"})
+                    res.end(JSON.stringify({message: 'OK'}))
+                } else {
+                    res.writeHead(404, {'Content-Type': " application/json"})
+                    res.end(JSON.stringify({message: 'Route not found'}))
+                }
+            }
+        })
+    } 
+    else if (url.startsWith('/book')) {
+        req.on('data', (data) => {
+            body += data.toString();
+        });
+        req.on("end", () => {
+            if (method === 'GET') { // lay tat ca sach
+                const books = readBookData();
+                const authors = readAuthorData();
+                const urlObj = new URL(req.url, `http://${req.headers.host}`);// url để lấy query string
+                const search = urlObj.searchParams.get('q')?.toLowerCase();
+                if (search) {
+                    const filteredBooks = books.filter(book => {
+                        const titleMatch = book.title?.toLowerCase().includes(search);
+                        const author = authors.find(author => author.id === book.authorId);
+                        const authorNameMatch = author?.name?.toLowerCase().includes(search);
+                        return titleMatch || authorNameMatch;
+                    });
+            
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify(filteredBooks));
+                } else {
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify(books));
+                }
+            }
+            if (method === 'POST') { // tao sach moi
+                const books = readBookData();
+                const authors = readAuthorData();
+                const newBook = JSON.parse(body);
+                const authorExists = authors.some(author => author.id === newBook.authorId);
+                if (! authorExists) {
+                    res.writeHead(400, {'Content-Type': 'application/json'});
+                    res.end(JSON.stringify({error: 'Tác giả không tồn tại.'}));
+                    return;
+                }
+                newBook.id = books.length ? books[books.length - 1].id + 1 : 1 // id tu dong tang
+                books.push(newBook);
+                writeBookFile(books);
+                logAction("ADD_BOOK", newBook);
+                res.writeHead(201, {'Content-Type': " application/json"})
+                res.end(JSON.stringify(newBook))
+            }
+            if (method === 'PUT') { // cap nhat sach hien tai
+                const books = readBookData();
+                const bookId = parseInt(url.split('/')[2]);
+                const updateBook = JSON.parse(body);
+                const bookIndex = books.findIndex((book) => book.id === bookId);
+
+                if (bookIndex !== -1) {
+                    books[bookIndex] = {
+                        id: bookId,
+                        ... updateBook
+                    };
+                    writeBookFile(books);
+                    logAction("UPDATE_BOOK", books[bookIndex]);
+                    res.writeHead(201, {'Content-Type': " application/json"})
+                    res.end(JSON.stringify(books[bookIndex]))
+                } else {
+                    res.writeHead(404, {'Content-Type': " application/json"})
+                    res.end(JSON.stringify({message: 'Route not found'}))
+                }
+            }
+            if (method === 'DELETE') { // xoa sach
+                const books = readBookData();
+                const bookId = parseInt(url.split('/')[2]);
+                const filteredBook = books.filter((book) => book.id !== bookId);
+
+                if (books.length !== filteredBook.length) {
+                    writeBookFile(filteredBook);
+                    logAction("DELETE_BOOK", { id: bookId });
+                    res.writeHead(200, {'Content-Type': " application/json"})
+                    res.end(JSON.stringify({message: 'OK'}))
+                } else {
+                    res.writeHead(404, {'Content-Type': " application/json"})
+                    res.end(JSON.stringify({message: 'Route not found'}))
+                }
+            }
+        })
+    } 
+    else {
         res.writeHead(404, {'Content-Type': " application/json"})
         res.end(JSON.stringify({message: 'Route not found'}))
     }
-    
+
+
 })
 server.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`)
 })
+// logger Là một module giúp ghi lại các hành động như: thêm, sửa, xóa,... vào một file log để dễ theo dõi lịch sử.
