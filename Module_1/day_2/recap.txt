@@ -1,0 +1,164 @@
+Giới thiệu cơ bản expressjs
+Nodejs là một nền tảng (Platform) phát triển độc lập được xây dựng ở trên Javascript Runtime của Chrome mà chúng ta có thể xây dựng được các ứng dụng mạng một cách nhanh chóng và dễ dàng mở rộng
+1. Express.js
+    là môt framework web phổ biến được xây dựng trên nền tảng nodejs.Nó cung cấp một bộ công cụ mạnh mẽ và linh hoạt về việc phát triển các ứng dụng web và API .Những điểm mạnh của Express bao gồm
+    + khả băng mở rộng : Express.js cho phép các nhà phát triển mở rộng ứng dụng của họ một cách dễ dàng, từ các ứng dụng đơn giản đến hệ thống phức tạp
+    + tính linh hoạt cao : Express.js không áp đặt cách cấu trúc ứng dụng cho phép các nhà phát triển tự do tổ chức mã nguồn theo cách mà họ cảm thấy phù hợp nhất
+    -các tính năng nổi bật :
+    + cấu trúc router mạnh mẽ : express.js cung cấp môt hệ thống routing linh hoạt , cho phép xác định các route( đường dẫn) khác nahu cho ứng dụng.Điều này giúp dễ dàng quản lý và xử lý các yêu cầu từ client 
+        -> xác đinh router : có thể dễ dàng định nghĩa cac router bằng các phương thức http như get post put delete
+        -> route tổ chức : có thể toor chức các router thành các module riêng biệt , giúp dễ dàng  bảo trì và mở rộng hệ thống
+    + middleware : là một trong những tính năng mạnh mẽ nhất của express.js.Middeware là các hàm được gọi trong quá trình xử lí yêu cầu và có thể thực hiện các tác vụ như 
+        -> xác thực : kiểm tra xem người dùng đã đăng nhập hay chưa
+        -> xử lí dữ liệu : chuyển đỏi và xử lý dữ liệu từ yeu cầu trươc khi đến route handler
+        -> ghi log : ghi lại thông tin về các yêu cầu vào file hoặc cơ sở dữ liệu
+    + hỗ trợ template engine : expressjs hỗ trọ nhiều template engine như ejs vs pug handlebars .Điều này cho phép tạo ra các trang html động môt cách dễ dàng .Bạn có thể kết hợp template engine với route để tạo ra nội dung dựa trên dữ liệu từ server 
+    + xử lí lỗi : cung cấp các phương thức xử lý lỗi một cách dễ dàng.Bạn có thể định nghĩa middleware xử lí lỗi giúp đẽ dàng quản lý và thông báo lỗi cho người dùng một cách rõ ràng
+    + tính hợp dễ dàng với các dich vụ và csdl : tính hợp dễ dàng với nhiều dịch vụ và csdl bên ngoài như mysql ỏ mongodb , tăng cường khả năng mở rộng và tạo ra các ứng dụng đa chức năng 
+        -> mongoose : thư viện phổ biến làm việc mongobd trong express.js , cung cấp các phương thức để định nghĩa schema và tương tác với csdl 
+        -> API bên ngoài : có thể dễ dàng gọi và sử dụng API bên ngoài trong qua các thư viện như axios hoặc fetch.
+    + cộng đồng lớn và tài liệu phong phú 
+
+2. Cài đặt và cấu hình môi trường
+    B1. Tạo thư mục dự án:
+                mkdir my-express-app
+                cd my-express-app
+    B2. Khởi tạo dự án Node.js ( lệnh này sẽ tạo ra một file package.json với các thiết lập mặc định ):
+                npm init -y
+    B3. Cài đặt TypeScript:
+                npm install typescript ts-node @types/node --save-dev
+    typescript: Gói chính của TypeScript.
+    ts-node: Giúp chạy TypeScript trực tiếp từ terminal.
+    @types/node: Thư viện chứa các định nghĩa kiểu cho Node.js.
+    B4. Cài đặt Express.js và các kiểu của nó:
+                npm install express 
+                npm install @types/express --save-dev
+    express: Framework web cho Node.js.
+    @types/express: Thư viện chứa các định nghĩa kiểu cho Express.js.
+    B5. Tạo cấu hình TypeScript:
+                npx tsc --init
+    Điều này sẽ tạo ra file tsconfig.json. Bạn có thể chỉnh sửa file này 
+    để phù hợp với dự án của mình. Bên cạnh là một ví dụ cấu hình:
+    B6. Tạo cấu trúc thư mục:
+    Cấu trúc thư mục hiện tại của bạn nên như sau:
+    my-express-app/
+    │
+    ├── node_modules/
+    ├── src/
+    │   └── index.ts
+    ├── package.json
+    ├── package-lock.json
+    └── tsconfig.json
+    B7. Viết mã cho ứng dụng Express.js:
+    Mở file src/index.ts và viết mã cơ bản cho ứng dụng Express.js:
+    B8. Chạy ứng dụng:
+    Bạn có thể chạy ứng dụng bằng cách sử dụng ts-node:
+                npx ts-node src/index.ts
+    Mở trình duyệt và truy cập http://localhost:3000. Bạn sẽ thấy thông báo "Chào mừng đến với ứng dụng Express.js với TypeScript!"
+    B9. Chạy ứng dụng với npm script: 
+    Để dễ dàng hơn trong việc chạy ứng dụng, bạn có thể thêm một script vào package.json. Mở file package.json và thêm đoạn sau vào mục scripts:
+    "scripts": {
+        "start": "ts-node src/index.ts"
+    }
+    Bây giờ, bạn có thể chạy ứng dụng bằng lệnh:
+            npm start
+
+3.Cấu trúc thư mục express js
+- Giải thích các thư mục và tệp tin:
+        node_modules/: Chứa tất cả các package đã cài đặt thông qua NPM.
+        src/: Thư mục chứa mã nguồn chính của ứng dụng.
+        config/: Chứa các tệp tin cấu hình, như cấu hình cơ sở dữ liệu và server.
+        controllers/: Chứa các controller, xử lý logic cho các route.
+        middleware/: Chứa các middleware, dùng để xử lý các yêu cầu trước khi đến controller.
+        models/: Chứa các model, định nghĩa cấu trúc dữ liệu và tương tác với cơ sở dữ liệu.
+        routes/: Chứa các route, định nghĩa các endpoint của ứng dụng.
+        services/: Chứa các service, dùng để tổ chức các logic phức tạp và tương tác với nhiều model khác nhau.
+        utils/: Chứa các hàm tiện ích chung cho toàn bộ ứng dụng.
+        tests/: Thư mục chứa các bài kiểm tra cho ứng dụng. Bạn có thể tổ chức theo cấu trúc tương tự như thư mục src/ để dễ dàng tìm kiếm và quản lý.
+        .env: Tập tin chứa các biến môi trường, như thông tin kết nối cơ sở dữ liệu và các cấu hình bảo mật khác.
+        .gitignore: Tập tin xác định các file và thư mục mà Git sẽ bỏ qua.
+        package.json: Chứa thông tin về dự án và các package đã cài đặt.
+        tsconfig.json: Tập tin cấu hình TypeScript, nơi bạn có thể định nghĩa các tùy chọn biên dịch.
+        README.md: Tài liệu mô tả dự án, hướng dẫn cài đặt, cấu hình và cách sử dụng.
+
+4.So sánh mô hình MVC với mô hình client-server
+    Mô hình MVC (Model-View-Controller)
+        1. Giải thích kiến trúc Model-View-Controller
+            - Mô hình MVC là một trong những kiến trúc phần mềm phổ biến và được sử dụng rộng rãi trong các ứng dụng web. Nó chia ứng dụng thành ba thành phần chính:
+            Model: Chịu trách nhiệm quản lý dữ liệu và logic của ứng dụng. Model không biết gì về View hay Controller. Nó chỉ đơn thuần chứa và xử lý dữ liệu từ các nguồn như cơ sở dữ liệu.
+            View: Là phần hiển thị, chịu trách nhiệm trình bày dữ liệu. View chỉ quan tâm đến việc hiển thị dữ liệu do Model cung cấp, không trực tiếp xử lý logic nghiệp vụ.
+            Controller: Là phần trung gian giữa Model và View, nhận yêu cầu từ người dùng (thông qua View), xử lý chúng (gọi Model để lấy dữ liệu), và trả kết quả về cho View.
+        2. Cách hoạt động
+            Người dùng tương tác với View (giao diện người dùng), yêu cầu này sẽ được gửi đến Controller.
+            Controller sẽ xử lý logic, giao tiếp với Model để lấy hoặc thay đổi dữ liệu.
+            Model trả dữ liệu về Controller, và Controller sẽ chuyển kết quả này về View để hiển thị cho người dùng.
+        3. Ưu điểm
+            Tách biệt rõ ràng giữa các phần: Điều này giúp dễ dàng bảo trì, mở rộng, và thay đổi các phần trong ứng dụng mà không ảnh hưởng lẫn nhau.
+            Tái sử dụng mã: Có thể dễ dàng tái sử dụng mã của View hoặc Model ở các ứng dụng khác.
+            Khả năng kiểm thử cao: Tách biệt các phần làm cho việc kiểm thử trở nên dễ dàng hơn, đặc biệt là kiểm thử đơn vị cho từng thành phần.
+        4. Nhược điểm
+            Khó khăn trong tổ chức: Nếu không tổ chức hợp lý, mã có thể trở nên phức tạp và khó quản lý.
+            Hiệu suất: Việc phân chia nhiều thành phần có thể làm cho hiệu suất ứng dụng giảm, đặc biệt trong các ứng dụng lớn.
+            Phụ thuộc vào framework: Các framework MVC có thể có quy định riêng về cách tổ chức mã, làm cho việc chuyển đổi giữa các framework khác nhau trở nên khó khăn.
+
+    Mô hình Client-Server với API
+        1. Giới thiệu kiến trúc Client-Server truyền thống
+            - Mô hình Client-Server là một kiến trúc phần mềm phổ biến trong các ứng dụng hiện đại, đặc biệt là các ứng dụng web. Trong mô hình này, có hai thành phần chính:
+            Client (Máy khách): Đây là phía mà người dùng tương tác. Máy khách gửi yêu cầu đến máy chủ để lấy dữ liệu hoặc thực hiện một tác vụ.
+            Server (Máy chủ): Là nơi xử lý các yêu cầu từ máy khách, xử lý dữ liệu, và trả về kết quả cho máy khách thông qua API (Application Programming Interface). API thường là RESTful API hoặc GraphQL trong các ứng dụng web hiện đại.
+        2. Cách hoạt động
+            Client gửi yêu cầu đến Server thông qua giao thức HTTP/HTTPS.
+            Server nhận yêu cầu, thực hiện các thao tác cần thiết (truy xuất dữ liệu từ cơ sở dữ liệu, xử lý logic) và trả về phản hồi cho Client dưới dạng JSON, XML hoặc HTML.
+            Client sau đó sẽ hiển thị dữ liệu theo cách mong muốn.
+        3. Ưu điểm
+            Phân chia rõ ràng vai trò: Client chỉ chịu trách nhiệm hiển thị giao diện, còn Server chịu trách nhiệm xử lý nghiệp vụ và lưu trữ dữ liệu.
+            Mở rộng dễ dàng: Khi ứng dụng phát triển, mô hình này giúp mở rộng hệ thống bằng cách tăng cường hiệu năng ở cả phía Client và Server.
+            Đa nền tảng: API có thể được sử dụng bởi nhiều loại client khác nhau, từ web đến ứng dụng di động, giúp đồng bộ dữ liệu và logic nghiệp vụ giữa các nền tảng.
+        4. Nhược điểm
+            Phức tạp trong quản lý: Việc phân chia thành hai phần tách biệt có thể gây khó khăn trong việc quản lý phiên bản và đồng bộ dữ liệu giữa Client và Server.
+            Chi phí phát triển cao: Cần phải phát triển và duy trì cả Client và Server, điều này có thể làm tăng chi phí phát triển.
+            Latency (Độ trễ): Tất cả các yêu cầu và phản hồi đều phải được gửi qua mạng, điều này có thể dẫn đến độ trễ, đặc biệt là trong các ứng dụng có nhiều tương tác.
+
+    So sánh MVC và Client-Server: Khi nào nên sử dụng?
+        1. Giống nhau
+            Phân chia trách nhiệm: Cả hai mô hình đều phân chia trách nhiệm rõ ràng giữa các thành phần. MVC chia thành Model, View và Controller, còn Client-Server chia thành Client và Server.
+            Kiến trúc hướng thành phần: Cả hai đều khuyến khích tổ chức mã nguồn theo thành phần, giúp dễ bảo trì và mở rộng.
+        2. Khác nhau
+            - Đối tượng sử dụng:
+            MVC thường được sử dụng trong các ứng dụng web truyền thống, nơi giao diện người dùng và logic nghiệp vụ được xử lý trên cùng một hệ thống (ví dụ như các ứng dụng với các framework như Rails, Django, hoặc Laravel).
+            Client-Server phù hợp hơn cho các ứng dụng hiện đại, đặc biệt là khi giao diện và server được tách biệt. Điều này phổ biến trong các hệ thống Single Page Application (SPA) sử dụng framework JavaScript (React, Angular, Vue).
+            - Cách tổ chức mã nguồn:
+            MVC tổ chức mã theo ba phần: Model, View, và Controller. Tất cả các phần này thường nằm trong cùng một ứng dụng.
+            Client-Server tổ chức mã nguồn riêng biệt cho Client và Server. Client gửi yêu cầu qua API và Server phản hồi lại dữ liệu.
+            - Xử lý logic:
+            Trong MVC, logic xử lý nghiệp vụ thường nằm trong Controller và Model.
+            Trong Client-Server, logic chủ yếu nằm ở phía Server. Client chỉ hiển thị dữ liệu và thực hiện yêu cầu đơn giản.
+        3. Khi nào nên sử dụng?
+            - Sử dụng MVC khi:
+            Bạn đang xây dựng một ứng dụng nhỏ hoặc trung bình, nơi mà phần giao diện và logic có thể kết hợp với nhau (như hệ thống quản lý nội dung, trang tin tức).
+            Bạn muốn xây dựng một ứng dụng mà tất cả logic được quản lý từ một hệ thống duy nhất và có sự kết nối trực tiếp giữa các phần.
+            - Sử dụng Client-Server khi:
+            Bạn cần tách biệt phần giao diện và logic nghiệp vụ, thường là trong các ứng dụng lớn, cần mở rộng, hoặc đa nền tảng (ví dụ: có cả web app và mobile app).
+            Bạn muốn xây dựng một ứng dụng mà phía máy khách chỉ cần gửi yêu cầu và nhận dữ liệu từ phía máy chủ, trong khi mọi logic nghiệp vụ đều nằm ở phía server.
+5.Routing 
+- Routing là quá trình xác định cách xử lý các yêu cầu HTTP đến một URL nhất định. Trong Express.js, mỗi route bao gồm một URL và một hoặc nhiều phương thức HTTP (GET, POST, PUT, DELETE).
+- Cú pháp cơ bản để định nghĩa route:
+			app.METHOD(PATH, HANDLER)
+METHOD: Phương thức HTTP (GET, POST, PUT, DELETE, v.v.).
+PATH: Đường dẫn (URL).
+HANDLER: Hàm xử lý yêu cầu, nhận hai tham số req và res.
+
+
+Route Parameters và Query Strings
+- Route Parameters: Được định nghĩa trong URL bằng dấu hai chấm (:).
+app.get('/api/users/:userId', (req: Request, res: Response) => {
+    const userId = req.params.userId;
+    res.send(`Thông tin người dùng với ID: ${userId}`);
+});
+
+- Query Strings: Được sử dụng sau dấu hỏi (?) trong URL.
+			app.get('/api/search', (req: Request, res: Response) => {
+    const searchTerm = req.query.term as string;
+    res.send(`Kết quả tìm kiếm cho: ${searchTerm}`);
+});
+
