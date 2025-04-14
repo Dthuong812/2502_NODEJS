@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 
 const userRoute = express.Router();
-userRoute.get("//",(req:Request, res:Response)=>{
+userRoute.get("/",(req:Request, res:Response)=>{
     const page = req.query.page;
     const limit = req.query.limit
     const id = req.params.id

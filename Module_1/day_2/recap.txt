@@ -162,3 +162,39 @@ app.get('/api/users/:userId', (req: Request, res: Response) => {
     res.send(`Kết quả tìm kiếm cho: ${searchTerm}`);
 });
 
+
+
+8.BTTH
+Bài tập 1: Quản lý sản phẩm trong cửa hàng (viết theo mô hình API hoặc mô hình MVC, nếu viết theo mô hình MVC thì thêm phần giao diện).
+- Đối tượng Product chứa các thông tin sau:
+id: mã sản phẩm (kiểu số).
+name: tên sản phẩm (kiểu chuỗi).
+price: giá sản phẩm (kiểu số).
+category: danh mục sản phẩm (kiểu chuỗi).
+- Các api cần có:
+products (POST): Thêm một sản phẩm mới vào danh sách sản phẩm.
+products (GET): Liệt kê tất cả các sản phẩm hiện có.
+products/:id (PUT): Cập nhật thông tin sản phẩm dựa theo mã sản phẩm.
+products/:id (DELETE): Xóa sản phẩm khỏi danh sách dựa trên mã sản phẩm.
+products/:id (GET): Lấy thông tin sản phẩm dựa trên mã sản phẩm.
+- Lưu ý:
+Đảm bảo các phương thức kiểm tra và xử lý lỗi khi sản phẩm không tồn tại.
+Các phương thức và thuộc tính cần được định nghĩa rõ ràng, có chú thích và giải thích các tham số, giá trị trả về.
+
+
+Bài tập 2: Quản lý tài khoản ngân hàng (viết theo mô hình API hoặc mô hình MVC, nếu viết theo mô hình MVC thì thêm phần giao diện).
+- Đối tượng BankAccount chứa các thông tin sau:
+accountNumber: số tài khoản (kiểu số).
+accountHolder: tên chủ tài khoản (kiểu chuỗi).
+balance: số dư tài khoản (kiểu số, mặc định là 0).
+- Các api cần có:
+create-account: Tạo một tài khoản mới và thêm vào danh sách tài khoản.
+close-account: Đóng một tài khoản bằng cách xóa tài khoản khỏi danh sách.
+get-account-by-number: Lấy thông tin tài khoản dựa trên số tài khoản.
+list-all-accounts: Liệt kê tất cả các tài khoản hiện có.
+deposit: Nạp tiền vào tài khoản dựa trên số tài khoản và số tiền.
+with-draw: Rút tiền từ tài khoản dựa trên số tài khoản và số tiền.
+- Lưu ý:
+Đảm bảo các phương thức nạp tiền và rút tiền kiểm tra số dư tài khoản để tránh tình trạng rút quá số dư.
+Viết các phương thức xử lý lỗi khi tài khoản không tồn tại hoặc số tiền rút lớn hơn số dư.
+Các phương thức và thuộc tính cần được định nghĩa rõ ràng, có chú thích và giải thích các tham số, giá trị trả về.
