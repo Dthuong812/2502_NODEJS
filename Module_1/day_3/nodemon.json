@@ -1,0 +1,7 @@
+{
+    "watch": ["src"],
+    "ignore": ["src/services/teacherService.ts", "src/data/*.json"],
+    "ext": "ts",
+    "exec": "ts-node src/index.ts"
+  }
+  
