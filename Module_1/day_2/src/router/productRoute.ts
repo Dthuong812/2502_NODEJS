@@ -65,6 +65,7 @@ productRoute.put("/:id",(req:Request , res: Response)=>{
 productRoute.delete("/:id",(req:Request , res: Response)=>{
     const productId = parseInt(req.params.id);
     const products = readProduct();
+    
     const filteredProduct = products.filter(product => product.id !== productId);
 
     if (products.length !== filteredProduct.length) {

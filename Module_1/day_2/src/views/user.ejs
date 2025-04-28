@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách người dùng</title>
+</head>
+<body>
+    <form action="/users" method="POST">
+        <input type="text" name="id" placeholder="Nhap Id">
+        <input type="text" name="name" placeholder="Nhap ten">
+        <button type="submit">ADD</button>
+    </form>
+    <h1>Danh sách người dùng</h1>
+    <ul>
+        <% if (data && data.length > 0) { %>
+            <% data.forEach(user => { %>
+                <% if (user && user.id && user.name) { %>
+                    <li><a href="/users/<%= user.id %>"><%= user.name %></a></li>
+                <% } %>
+            <% }) %>
+        <% } else { %>
+            <li>Không có người dùng nào.</li>
+        <% } %>
+    </ul>
+</body>
+</html>
