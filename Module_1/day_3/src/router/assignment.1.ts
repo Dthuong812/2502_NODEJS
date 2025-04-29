@@ -49,14 +49,16 @@ teacherRoute.post("/register", validationRegister, async (req: Request, res: Res
 
     // Send confirmation email
     try {
-        await sendConfirmationEmail(email, name);
-        console.log("Confirmation email sent to:", email);
-        res.status(201).json({ message: "Registration successful. Confirmation email sent." });
-        return;
+        await sendConfirmationEmail(
+            email,
+            'Đăng ký thành công',
+            `Xin chào ${name},\n\nCảm ơn bạn đã đăng ký. Tài khoản của bạn đã được tạo thành công.\n\nTrân trọng,\nĐội ngũ của bạn`
+        );
+        console.log("Email notification sent to:", email);
+        res.status(201).json({ message: "Đăng ký thành công và email thông báo đã được gửi." });
     } catch (error) {
-        console.error("Failed to send confirmation email:", error);
-        res.status(500).json({ message: "Registration successful, but failed to send confirmation email." });
-        return;
+        console.error("Failed to send email notification:", error);
+        res.status(500).json({ message: "Đăng ký thành công, nhưng không thể gửi email thông báo." });
     }
 });
 // Endpoint đăng nhập

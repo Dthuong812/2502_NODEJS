@@ -1,6 +1,7 @@
 import express from "express"
 import path from "path";
 import teacherRoute from "./router/assignment.1";
+import courseRoute from "./router/courses";
 
 
 const app = express();
@@ -15,6 +16,7 @@ app.use(express.urlencoded({extended:true}));
 
 
 app.use("/b1",teacherRoute )
+app.use("/b2/course",courseRoute )
 
 app.listen(PORT ,()=>{
     console.log(` Server running at http://localhost:${PORT}`)

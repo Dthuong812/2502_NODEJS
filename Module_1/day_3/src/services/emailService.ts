@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import { mailConfig } from '../config/mailConfig';
 
-export const sendConfirmationEmail = async (to: string, name: string) => {
+export const sendConfirmationEmail = async (to: string, subject: string, text: string) => {
     if (!mailConfig.SMTP_USER || !mailConfig.SMTP_PASS || !mailConfig.FROM_EMAIL) {
         throw new Error('Thiếu thông tin cấu hình email');
     }
@@ -22,11 +22,13 @@ export const sendConfirmationEmail = async (to: string, name: string) => {
     const mailOptions = {
         from: mailConfig.FROM_EMAIL,
         to,
-        subject: 'Đăng ký thành công',
-        text: `Xin chào ${name},\n\nCảm ơn bạn đã đăng ký. Tài khoản của bạn đã được tạo thành công.\n\nTrân trọng,\nĐội ngũ của bạn`
+        subject,
+        text, 
     };
 
     console.log('Đang gửi email tới:', to);
     await transporter.sendMail(mailOptions);
     console.log('Email đã gửi thành công');
+
+  
 };

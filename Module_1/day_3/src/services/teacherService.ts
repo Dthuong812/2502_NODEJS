@@ -27,3 +27,10 @@ export const writeTeacher = (data: user[]): void => {
         throw error; // Propagate error
     }
 };
+
+export const getTeacherEmail = (teacherName: string): string | null => {
+    const teacherFile = path.join(__dirname, "../teacher.json");
+    const teacherData = JSON.parse(fs.readFileSync(teacherFile, "utf-8"));
+    const teacher = teacherData.find((t: { name: string; email: string }) => t.name === teacherName);
+    return teacher ? teacher.email : null;
+};
