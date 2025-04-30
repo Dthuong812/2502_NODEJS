@@ -11,10 +11,16 @@ export interface course{
     description: string,
     teacher: string,
     startDate: Date,
-    endDate: Date
+    endDate: Date,
+    reviews?: review[]
 }
 
-
-
+export interface review{
+    id: number,
+    student: string,
+    rating: number,
+    comment: string,
+    createdAt: Date,
+}
 
 

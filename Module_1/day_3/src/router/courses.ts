@@ -1,4 +1,5 @@
-import { course } from './../types/authType';
+import cron from 'node-cron';
+import { course, review } from './../types/authType';
 import { validateCourse, validateGetCourse } from './../middleware/validation';
 import  express, { Request, Response }  from 'express';
 
@@ -6,6 +7,8 @@ import { validationResult } from 'express-validator';
 import { readCourse, writeCourse } from '../services/courseService';
 import { sendConfirmationEmail } from '../services/emailService';
 import { getTeacherEmail } from '../services/teacherService';
+
+
 
 const courseRoute = express.Router();
 
@@ -150,6 +153,134 @@ courseRoute.delete("/:id", (req: Request, res: Response) => {
     writeCourse(courses);
     console.log("Course deleted:", deletedCourse.nameCourse);
     res.status(200).json({ message: "Khóa học đã được xóa thành công." });
-})
+});
+courseRoute.post("/:id/review", async(req: Request, res: Response) => {
+    const { id } = req.params;
+    const {student, rating, comment} = req.body;
 
+    let courses = readCourse();
+
+    const course = courses.find((course) => course.id === Number(id));
+    if (!course) {
+        console.log("Course not found with ID:", id);
+        res.status(404).json({ message: "Không tìm thấy khóa học." });  
+        return;
+    }
+
+    const newReview = {
+        id: Date.now(),
+        student,
+        rating,
+        comment,
+        createdAt: new Date()
+    };
+
+    if (!course.reviews) {
+        course.reviews = [];
+    }
+    course.reviews.push(newReview);
+    writeCourse(courses);
+    console.log("Review added to course:", id);
+
+    const teacherEmail = getTeacherEmail(course.teacher);
+    if (!teacherEmail) {
+        console.error("Teacher email not found for:", course.teacher);
+        res.status(400).json({ message: "Không tìm thấy email của giảng viên." });
+        return;
+    }
+
+    try{
+        await sendConfirmationEmail(
+            teacherEmail,
+            `Đánh giá mới cho khóa học: ${course.nameCourse}`,
+            `Xin chào,\n\nKhóa học "${course.nameCourse}" đã nhận được một đánh giá mới từ ${student}.\n\nTrân trọng,\nĐội ngũ quản lý khóa học`
+        )
+        console.log("Email notification sent to instructor:", course.teacher);
+        res.status(201).json({ message: "Đánh giá đã được thêm thành công và email thông báo đã được gửi." });
+    } catch (error) {
+        console.error("Failed to send email notification:", error);
+        res.status(500).json({ message: "Đánh giá đã được thêm thành công, nhưng không thể gửi email thông báo." });
+
+    }
+    res.status(201).json({ message: "Đánh giá đã được thêm thành công." });
+});
+
+courseRoute.get("/:id/review", async(req: Request, res: Response) => {
+    const {id} = req.params;
+
+    let courses = readCourse();
+
+    const course = courses.find((course) => course.id === Number(id));
+    if (!course) {
+        console.log("Course not found with ID:", id);
+        res.status(404).json({ message: "Không tìm thấy khóa học." });
+        return;
+    }
+    res.status(200).json({
+        reviews: course.reviews || [],
+        totalReviews: course.reviews ? course.reviews.length : 0
+    })
+});
+
+courseRoute.put("/review/:id", async(req: Request, res: Response) => {
+    const { id } = req.params;
+    const { student, rating, comment } = req.body;
+
+    let courses = readCourse();
+
+    let reviewFound = false;
+    for (const course of courses) {
+        if (course.reviews) {
+            const reviewIndex = course.reviews.findIndex((review) => review.id === Number(id));
+            if (reviewIndex !== -1) {
+                course.reviews[reviewIndex] = {
+                    ...course.reviews[reviewIndex],
+                    student,
+                    rating,
+                    comment,
+                    createdAt: new Date()
+                };
+                reviewFound = true;
+                break;
+            }
+        }
+    }
+    if(!reviewFound) {
+        console.log("Review not found with ID:", id);
+        res.status(404).json({ message: "Không tìm thấy đánh giá." });
+        return;
+    }
+
+    writeCourse(courses);
+    console.log("Review updated:", id);
+    res.status(200).json({ message: "Đánh giá đã được cập nhật thành công." });
+});
+
+cron.schedule('0 9 * * *', async () => {
+    console.log("Running daily email reminders...");
+
+    const courses = readCourse();
+
+    for (const course of courses) {
+        if (course.reviews && course.reviews.length > 0) {
+            const latestReview = course.reviews[course.reviews.length - 1];
+            const teacherEmail = getTeacherEmail(course.teacher); 
+            if (!teacherEmail) {
+                console.error(`Teacher email not found for: ${course.teacher}`);
+                continue; 
+            }
+
+            try {
+                await sendConfirmationEmail(
+                    teacherEmail,
+                    `Nhắc nhở: Đánh giá mới cho khóa học ${course.nameCourse}`,
+                    `Xin chào,\n\nBạn có một đánh giá mới cho khóa học "${course.nameCourse}".\n\nChi tiết đánh giá:\n- Học viên: ${latestReview.student}\n- Đánh giá: ${latestReview.rating}/5\n- Nhận xét: ${latestReview.comment}\n\nTrân trọng,\nHệ thống quản lý khóa học`
+                );
+                console.log("Reminder email sent to teacher:", teacherEmail);
+            } catch (error) {
+                console.error("Failed to send reminder email:", error);
+            }
+        }
+    }
+});
 export default courseRoute;

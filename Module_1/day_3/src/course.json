@@ -5,6 +5,42 @@
     "description": "Học lập trình nodejs",
     "teacher": "Da Thuong",
     "startDate": "20/05/2025",
-    "endDate": "20/09/2025"
+    "endDate": "20/09/2025",
+    "reviews": [
+      {
+        "id": 1745935756593,
+        "rating": 5,
+        "comment": "Khóa học rất bổ ích!",
+        "createdAt": "2025-04-29T14:09:16.593Z"
+      },
+      {
+        "id": 1745935891746,
+        "student": "Khanh My",
+        "rating": 4,
+        "comment": "Khóa học tốt nhưng cần cải thiện tài liệu.",
+        "createdAt": "2025-04-29T14:22:15.943Z"
+      },
+      {
+        "id": 1745941548920,
+        "student": "Khanh Nhi",
+        "rating": 5,
+        "comment": "Khóa học rất bổ ích!",
+        "createdAt": "2025-04-29T15:45:48.920Z"
+      },
+      {
+        "id": 1745941929582,
+        "student": "Khanh Nam",
+        "rating": 5,
+        "comment": "Khóa học rất bổ ích!",
+        "createdAt": "2025-04-29T15:52:09.582Z"
+      },
+      {
+        "id": 1745942253378,
+        "student": "Nhat Minh",
+        "rating": 5,
+        "comment": "Khóa học rất bổ ích!",
+        "createdAt": "2025-04-29T15:57:33.378Z"
+      }
+    ]
   }
 ]
