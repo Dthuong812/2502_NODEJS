@@ -58,3 +58,33 @@ export const validateGetCourse = [
         .optional()
         .isString().withMessage("Search must be a string")
 ]
+
+export const validateEvent = [
+    body('name').notEmpty().withMessage('Name is required'),
+    body('description').notEmpty().withMessage('Description is required'),
+    body('time').notEmpty().withMessage('Time is required')
+        .custom((value) => {
+            if (!moment(value, "DD/MM/YYYY HH:mm", true).isValid()) {
+                throw new Error("Time must be in DD/MM/YYYY HH:mm format");
+            }
+            return true;
+        }),
+    body('participants').isArray().withMessage('Participants must be an array of strings')
+        .custom((value) => {
+            if (value.length < 2) {
+                throw new Error("At least two participants are required");
+            }
+            return true;
+        })
+        .custom((value) => {    
+            const teacherFile = path.join(__dirname, "../teacher.json");
+            const teacherData = JSON.parse(fs.readFileSync(teacherFile, "utf-8"));
+            const teacherNames = teacherData.map((teacher: { name: string }) => teacher.name);
+            const invalidParticipants = value.filter((participant: string) => !teacherNames.includes(participant));
+            if (invalidParticipants.length > 0) {
+                throw new Error(`Invalid participants: ${invalidParticipants.join(", ")}`);
+            }
+            return true;
+        }
+    ),
+]

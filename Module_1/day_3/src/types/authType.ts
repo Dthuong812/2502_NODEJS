@@ -23,4 +23,12 @@ export interface review{
     createdAt: Date,
 }
 
+export interface event{
+    id : number,
+    name: string,
+    description: string,
+    time : Date,
+    participants: string[],
+}
+
 
