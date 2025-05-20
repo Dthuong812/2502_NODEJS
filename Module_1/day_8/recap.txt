@@ -1,1 +1,16 @@
 Middleware
+Bài tập 1: Hệ thống đăng ký và đăng nhập người dùng.
+    - Yêu cầu:
+        Tạo một API cho phép người dùng đăng ký tài khoản. 
+        Sử dụng Middleware để ghi log thông tin yêu cầu. (có thể tham khảo package morgan hoặc winston) 
+        Sử dụng Pipe để xác thực thông tin đầu vào khi đăng ký. 
+        Tạo Guard để kiểm tra xác thực người dùng khi đăng nhập. 
+        Sử dụng Event để gửi email chào mừng người dùng mới.
+    - Mục tiêu:
+        Hiểu cách tích hợp Middleware, Pipe, Guards và Events trong một ứng dụng Express.js. 
+        Thực hành viết mã với TypeScript. 
+        Nâng cao kỹ năng xử lý dữ liệu từ phía máy chủ.
+    - Hướng dẫn:
+        Tạo endpoint /register để đăng ký người dùng. 
+        Tạo endpoint /login để đăng nhập người dùng. 
+        Sử dụng session hoặc token để quản lý phiên làm việc.
